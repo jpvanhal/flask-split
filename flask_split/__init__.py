@@ -58,7 +58,7 @@ class Split(object):
                 alternative.increment_participation()
                 self.begin_experiment(experiment, alternative.name)
                 return alternative.name
-        except ConnectionError as e:
+        except ConnectionError, e:
             if not current_app.config['SPLIT_DB_FAILOVER']:
                 raise
             self.handle_db_error(e)
@@ -79,7 +79,7 @@ class Split(object):
                 if reset:
                     self.ab_user.pop(experiment_name, None)
                     session.modified = True
-        except ConnectionError as e:
+        except ConnectionError, e:
             if not current_app.config['SPLIT_DB_FAILOVER']:
                 raise
             self.handle_db_error(e)
