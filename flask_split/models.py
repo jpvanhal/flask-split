@@ -19,21 +19,27 @@ class Alternative(object):
             self.name = name
             self.weight = 1
 
-    @property
-    def participant_count(self):
+    def _get_participant_count(self):
         return int(self.redis.hget(self.key, 'participant_count') or 0)
 
-    @participant_count.setter
-    def participant_count(self, count):
+    def _set_participant_count(self, count):
         self.redis.hset(self.key, 'participant_count', int(count))
 
-    @property
-    def completed_count(self):
+    participant_count = property(
+        _get_participant_count,
+        _set_participant_count
+    )
+
+    def _get_completed_count(self):
         return int(self.redis.hget(self.key, 'completed_count') or 0)
 
-    @completed_count.setter
-    def completed_count(self, count):
+    def _set_completed_count(self, count):
         self.redis.hset(self.key, 'completed_count', int(count))
+
+    completed_count = property(
+        _get_completed_count,
+        _set_completed_count
+    )
 
     def increment_participation(self):
         self.redis.hincrby(self.key, 'participant_count', 1)
@@ -131,15 +137,18 @@ class Experiment(object):
     def control(self):
         return self.alternatives[0]
 
-    @property
-    def winner(self):
+    def _get_winner(self):
         winner = self.redis.hget('experiment_winner', self.name)
         if winner:
             return Alternative(winner, self.name)
 
-    @winner.setter
-    def winner(self, winner_name):
+    def _set_winner(self, winner_name):
         self.redis.hset('experiment_winner', self.name, winner_name)
+
+    winner = property(
+        _get_winner,
+        _set_winner
+    )
 
     def reset_winner(self):
         self.redis.hdel('experiment_winner', self.name)
