@@ -23,7 +23,21 @@ class Split(object):
     def init_app(self, app):
         app.config.setdefault('SPLIT_ALLOW_MULTIPLE_EXPERIMENTS', False)
         app.config.setdefault('SPLIT_IGNORE_IP_ADDRESSES', [])
-        app.config.setdefault('SPLIT_ROBOT_REGEX', r"(?i)\b(Baidu|Gigabot|Googlebot|libwww-perl|lwp-trivial|msnbot|SiteUptime|Slurp|WordPress|ZIBB|ZyBorg)\b")
+        app.config.setdefault('SPLIT_ROBOT_REGEX', r"""
+            (?i)\b(
+                Baidu|
+                Gigabot|
+                Googlebot|
+                libwww-perl|
+                lwp-trivial|
+                msnbot|
+                SiteUptime|
+                Slurp|
+                WordPress|
+                ZIBB|
+                ZyBorg
+            )\b
+        """)
 
         app.extensions['split'] = self
         app.register_blueprint(split, url_prefix='/split')
@@ -40,15 +54,18 @@ class Split(object):
 
     def ab_test(self, experiment_name, *alternatives):
         try:
-            experiment = Experiment.find_or_create(experiment_name, *alternatives)
+            experiment = Experiment.find_or_create(
+                experiment_name, *alternatives)
             if experiment.winner:
                 return experiment.winner.name
             else:
-                forced_alternative = self.override(experiment.name, experiment.alternative_names)
+                forced_alternative = self.override(
+                    experiment.name, experiment.alternative_names)
                 if forced_alternative:
                     return forced_alternative
                 self.clean_old_versions(experiment)
-                if self.exclude_visitor() or self.not_allowed_to_test(experiment.key):
+                if (self.exclude_visitor() or
+                        self.not_allowed_to_test(experiment.key)):
                     self.begin_experiment(experiment)
 
                 alternative_name = self.ab_user.get(experiment.key)
@@ -154,7 +171,7 @@ class Split(object):
     def is_robot(self):
         robot_regex = current_app.config['SPLIT_ROBOT_REGEX']
         user_agent = request.headers.get('User-Agent', '')
-        return re.search(robot_regex, user_agent)
+        return re.search(robot_regex, user_agent, flags=re.VERBOSE)
 
     def is_ignored_ip_address(self):
         ignore_ip_addresses = current_app.config['SPLIT_IGNORE_IP_ADDRESSES']

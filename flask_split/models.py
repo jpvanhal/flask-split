@@ -99,7 +99,11 @@ class Alternative(object):
         if ctr_c == 0:
             return 0
 
-        standard_deviation = sqrt((ctr_e / ctr_c ** 3) * ((e * ctr_e) + (c * ctr_c) - (ctr_c * ctr_e) * (c + e)) / (c * e))
+        standard_deviation = sqrt(
+            (ctr_e / ctr_c ** 3) *
+            ((e * ctr_e) + (c * ctr_c) - (ctr_c * ctr_e) * (c + e)) /
+            (c * e)
+        )
 
         return ((ctr_e / ctr_c) - 1) / standard_deviation
 

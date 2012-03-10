@@ -29,7 +29,8 @@ def index():
 def set_experiment_winner(experiment):
     experiment = Experiment.find(experiment)
     if experiment:
-        alternative = Alternative(request.form.get('alternative'), experiment.name)
+        alternative_name = request.form.get('alternative')
+        alternative = Alternative(alternative_name, experiment.name)
         if alternative.name in experiment.alternative_names:
             experiment.winner = alternative.name
     return redirect(url_for('.index'))
