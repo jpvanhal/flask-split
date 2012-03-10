@@ -29,7 +29,7 @@ setup(
     platforms='any',
     install_requires=[
         'Flask',
-        'Redis >= 2.0'
+        'Redis>=2.0',
     ],
     cmdclass={'test': PyTest},
     classifiers=[
