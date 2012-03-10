@@ -1,0 +1,45 @@
+tfoot {
+    font-weight: bold;
+}
+
+.experiment {
+    margin: 36px 0;
+}
+
+.experiment-header {
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 18px;
+}
+
+.experiment-header h2 {
+    float: left;
+}
+
+.experiment table form {
+    margin-bottom: 0;
+}
+
+#footer {
+  margin-top: 45px;
+  padding: 35px 0 36px;
+  border-top: 1px solid #e5e5e5;
+}
+
+.inline-controls {
+  float: right;
+}
+
+.inline-controls form {
+  margin-bottom: 0;
+}
+
+.inline-controls form {
+  display: inline-block;
+}
+
+.start-time {
+    color: #999;
+    font-size: 18px;
+    vertical-align: middle;
+    margin-right: 10px;
+}

@@ -1,0 +1,87 @@
+<div class="experiment">
+  <div class="experiment-header clearfix">
+    <h2>
+      <span class="muted">Experiment:</span> {{ experiment.name }}
+      {% if experiment.version > 1 %}<small>v{{ experiment.version }}</small>{% endif %}
+    </h2>
+    <div class="inline-controls">
+      <span class="start-time">{{ experiment.start_time.strftime('%Y-%m-%d') }}</span>
+      <form class="form-reset-experiment" action="{{ url_for('.reset_experiment', experiment=experiment.name) }}" method="post">
+        <input type="submit" class="btn" value="Reset Data">
+      </form>
+      <form class="form-delete-experiment" action="{{ url_for('.delete_experiment', experiment=experiment.name) }}" method="post">
+        <input type="submit" class="btn btn-danger" value="Delete">
+      </form>
+    </div>
+  </div>
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Alternative Name</th>
+        <th>Participants</th>
+        <th>Non-finished</th>
+        <th>Completed</th>
+        <th>Conversion Rate</th>
+        <th>Confidence</th>
+        <th>Finish</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <td>Totals</td>
+        <td>{{ experiment.total_participants }}</td>
+        <td>{{ experiment.total_participants - experiment.total_completed }}</td>
+        <td>{{ experiment.total_completed }}</td>
+        <td>N/A</td>
+        <td>N/A</td>
+        <td>N/A</td>
+      </tr>
+    </tfoot>
+    <tbody>
+      {% for alternative in experiment.alternatives %}
+        <tr>
+          <td>
+            {{ alternative.name }}
+            {% if alternative.is_control %}
+              <span class="label label-info">control</span>
+            {% endif %}
+          </td>
+          <td>{{ alternative.participant_count }}</td>
+          <td>{{ alternative.participant_count - alternative.completed_count }}</td>
+          <td>{{ alternative.completed_count }}</td>
+          <td>
+            {{ 100 * alternative.conversion_rate }}%
+            {% if experiment.control.conversion_rate > 0 and not alternative.is_control %}
+              <span class="label label-success">
+                +{{ 100 * ((alternative.conversion_rate / experiment.control.conversion_rate) - 1)}}%
+              </span>
+            {% elif alternative.conversion_rate < experiment.control.conversion_rate %}
+              <span class="label label-danger">
+                {{ 100 * ((alternative.conversion_rate / experiment.control.conversion_rate) - 1)}}%
+              </span>
+            {% endif %}
+          </td>
+          <td>
+            <span rel="tooltip" title="{% if alternative.z_score is not none %}z-score: {{ alternative.z_score|round(3) }}{% endif %}">
+              {{ alternative.confidence_level }}
+            </span>
+          </td>
+          <td>
+            {% if experiment.winner %}
+              {% if experiment.winner.name == alternative.name %}
+                Winner
+              {% else %}
+                Loser
+              {% endif %}
+            {% else %}
+              <form class="form-set-winner" action="{{ url_for('.set_experiment_winner', experiment=experiment.name) }}" method="post">
+                <input type="hidden" name="alternative" value="{{ alternative.name }}">
+                <input type="submit" value="Use this" class="btn btn-success btn-mini">
+              </form>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
