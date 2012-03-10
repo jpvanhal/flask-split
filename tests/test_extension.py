@@ -1,3 +1,5 @@
+from __future__ import with_statement
+
 from flask import session
 from flask_split.models import Alternative, Experiment
 from flexmock import flexmock
