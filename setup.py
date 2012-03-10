@@ -1,4 +1,19 @@
-from setuptools import setup
+from setuptools import setup, Command
+import subprocess
+
+
+class PyTest(Command):
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        errno = subprocess.call(['py.test'])
+        raise SystemExit(errno)
 
 
 setup(
@@ -16,6 +31,7 @@ setup(
         'Flask',
         'Redis >= 2.0'
     ],
+    cmdclass={'test': PyTest},
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
