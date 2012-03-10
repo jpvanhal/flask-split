@@ -76,10 +76,7 @@ class Alternative(object):
 
     @property
     def key(self):
-        return '{experiment_name}:{name}'.format(
-            experiment_name=self.experiment_name,
-            name=self.name
-        )
+        return '%s:%s' % (self.experiment_name, self.name)
 
     @property
     def z_score(self):
@@ -184,18 +181,15 @@ class Experiment(object):
 
     @property
     def version(self):
-        return int(self.redis.get('{name}:version'.format(name=self.name)) or 0)
+        return int(self.redis.get('%s:version' % self.name) or 0)
 
     def increment_version(self):
-        self.redis.incr('{name}:version'.format(name=self.name))
+        self.redis.incr('%s:version' % self.name)
 
     @property
     def key(self):
         if self.version > 0:
-            return "{name}:{version}".format(
-                name=self.name,
-                version=self.version
-            )
+            return "%s:%s" % (self.name, self.version)
         else:
             return self.name
 
