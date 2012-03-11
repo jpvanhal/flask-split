@@ -27,6 +27,7 @@ setup(
     long_description=open('README.rst').read() + '\n\n' +
                      open('CHANGES.rst').read(),
     packages=['flask_split'],
+    include_package_data=True,
     zip_safe=False,
     platforms='any',
     install_requires=[
