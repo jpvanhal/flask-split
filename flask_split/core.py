@@ -21,7 +21,7 @@ from .views import split
 @split.record
 def init_app(state):
     """
-    Initializes Flask-Split's settings from the application settings.
+    Prepare the Flask application for Flask-Split.
 
     :param state: :class:`BlueprintSetupState` instance
     """
@@ -53,10 +53,17 @@ def init_app(state):
 
 def ab_test(experiment_name, *alternatives):
     """
-    ...
+    Start a new A/B test.
 
-    :param experiment_name:
-    :param *alternatives:
+    Returns one of the alternatives. If the user has already seen the test,
+    they will get the same alternative as before.
+
+    :param experiment_name: Name of the experiment.  You should never use the
+        same experiment name to refer to a second experiment.
+    :param alternatives: A list of alternatives.  Each item can be either a
+        string or a two-tuple of the form (alternative name, weight).  By
+        default each alternative has the weight of 1.  The first alternative
+        is the control.  Every experiment must have at least  two alternatives.
     """
     try:
         experiment = Experiment.find_or_create(
@@ -89,10 +96,12 @@ def ab_test(experiment_name, *alternatives):
 
 def finished(experiment_name, reset=True):
     """
-    ...
+    Track a conversion.
 
-    :param experiment_name:
-    :param reset:
+    :param experiment_name: Name of the experiment.
+    :param reset: If set to `True` current user's session is reset so that they
+        may start the test again in the future.  If set to `False` the user
+        will always see the alternative they started with.  Defaults to `True`.
     """
     if _exclude_visitor():
         return
