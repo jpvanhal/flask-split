@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask
-from flask_split import Split
-from flask_split.models import redis
+from flask.ext.split import split
+from flask.ext.split.models import redis
 
 
 class TestCase(object):
@@ -11,7 +11,7 @@ class TestCase(object):
         self.app = Flask(__name__)
         self.app.debug = True
         self.app.secret_key = 'very secret'
-        self.split = Split(self.app)
+        self.app.register_blueprint(split, url_prefix='/split')
         self._ctx = self.make_test_request_context()
         self._ctx.push()
         self.client = self.app.test_client()
