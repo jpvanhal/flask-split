@@ -270,7 +270,6 @@ class Experiment(object):
                 experiment = cls(name, *alternatives)
                 experiment.save()
         else:
-            print 'Creating experiment'
             experiment = cls(name, *alternatives)
             experiment.save()
         return experiment
