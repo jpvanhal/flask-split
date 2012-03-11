@@ -117,10 +117,10 @@ class Split(object):
         The decorated function is passed a :class:`redis.ConnectionError`
         object.
 
-        Example::
+        For example, you might want to log the errors::
 
-            @split.on_db_error
-            def on_db_error(e):
+            @split.db_error_handler
+            def db_error_handler(e):
                 log.error(e.message)
 
         """

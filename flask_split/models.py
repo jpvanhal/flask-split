@@ -160,27 +160,34 @@ class Experiment(object):
     )
 
     def reset_winner(self):
+        """Reset the winner of this experiment."""
         redis.hdel('experiment_winner', self.name)
 
     @property
     def start_time(self):
+        """The start time of this experiment."""
         t = redis.hget('experiment_start_times', self.name)
         if t:
             return datetime.strptime(t, '%Y-%m-%dT%H:%M:%S')
 
     @property
     def total_participants(self):
+        """The total number of participants in this experiment."""
         return sum(a.participant_count for a in self.alternatives)
 
     @property
     def total_completed(self):
+        """The total number of users who completed this experiment."""
         return sum(a.completed_count for a in self.alternatives)
 
     @property
     def alternative_names(self):
+        """A list of alternative names. in this experiment."""
         return [alternative.name for alternative in self.alternatives]
 
     def next_alternative(self):
+        """Return the winner of the experiment if set, or a random
+        alternative."""
         return self.winner or self.random_alternative()
 
     def random_alternative(self):
@@ -206,12 +213,14 @@ class Experiment(object):
             return self.name
 
     def reset(self):
+        """Delete all data for this experiment."""
         for alternative in self.alternatives:
             alternative.reset()
         self.reset_winner()
         self.increment_version()
 
     def delete(self):
+        """Delete this experiment and all its data."""
         for alternative in self.alternatives:
             alternative.delete()
         self.reset_winner()
