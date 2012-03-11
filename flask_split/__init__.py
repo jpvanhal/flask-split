@@ -12,7 +12,7 @@
 import re
 
 from flask import current_app, request, session
-from redis import ConnectionError, Redis
+from redis import ConnectionError
 
 from .models import Alternative, Experiment
 from .views import split
@@ -29,7 +29,6 @@ class Split(object):
     def __init__(self, app=None):
         if app:
             self.init_app(app)
-        self._redis = None
 
     def init_app(self, app):
         app.config.setdefault('SPLIT_ALLOW_MULTIPLE_EXPERIMENTS', False)
@@ -56,12 +55,6 @@ class Split(object):
             'ab_test': self.ab_test,
             'finished': self.finished
         })
-
-    @property
-    def redis(self):
-        if not self._redis:
-            self._redis = Redis()
-        return self._redis
 
     def ab_test(self, experiment_name, *alternatives):
         try:

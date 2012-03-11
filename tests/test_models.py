@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from flask_split.models import Alternative, Experiment
+from flask_split.models import Alternative, Experiment, redis
 from flexmock import flexmock
 
 from . import TestCase
@@ -30,7 +30,7 @@ class TestAlternative(TestCase):
     def test_saves_to_redis(self):
         alternative = Alternative('Basket', 'basket_text')
         alternative.save()
-        assert 'basket_text:Basket' in self.split.redis
+        assert 'basket_text:Basket' in redis
 
     def test_increment_participation_count(self):
         experiment = Experiment('basket_text', 'Basket', "Cart")
@@ -100,7 +100,7 @@ class TestExperiment(TestCase):
     def test_saves_to_redis(self):
         experiment = Experiment('basket_text', 'Basket', 'Cart')
         experiment.save()
-        assert 'basket_text' in self.split.redis
+        assert 'basket_text' in redis
 
     def test_saves_the_start_time_to_redis(self):
         experiment_start_time = datetime(2012, 3, 9, 22, 01, 34)
@@ -115,7 +115,7 @@ class TestExperiment(TestCase):
         experiment = Experiment('basket_text', 'Basket', 'Cart')
         experiment.save()
 
-        self.split.redis.hdel('experiment_start_times', experiment.name)
+        redis.hdel('experiment_start_times', experiment.name)
 
         assert Experiment.find('basket_text').start_time is None
 
@@ -123,15 +123,15 @@ class TestExperiment(TestCase):
         experiment = Experiment('basket_text', 'Basket', 'Cart')
         experiment.save()
         experiment.save()
-        assert 'basket_text' in self.split.redis
-        assert self.split.redis.lrange('basket_text', 0, -1) == ['Basket', 'Cart']
+        assert 'basket_text' in redis
+        assert redis.lrange('basket_text', 0, -1) == ['Basket', 'Cart']
 
     def test_deleting_should_delete_itself(self):
         experiment = Experiment('basket_text', 'Basket', 'Cart')
         experiment.save()
 
         experiment.delete()
-        assert 'basket_text' not in self.split.redis
+        assert 'basket_text' not in redis
 
     def test_deleting_should_increment_the_version(self):
         experiment = Experiment.find_or_create('link_color', 'blue', 'red', 'green')

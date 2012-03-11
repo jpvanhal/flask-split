@@ -2,15 +2,16 @@
 
 from flask import Flask
 from flask_split import Split
+from flask_split.models import redis
 
 
 class TestCase(object):
     def setup_method(self, method):
+        redis.flushall()
         self.app = Flask(__name__)
         self.app.debug = True
         self.app.secret_key = 'very secret'
         self.split = Split(self.app)
-        self.split.redis.flushall()
         self._ctx = self.make_test_request_context()
         self._ctx.push()
         self.client = self.app.test_client()

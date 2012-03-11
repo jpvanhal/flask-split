@@ -13,16 +13,14 @@ from datetime import datetime
 from math import sqrt
 from random import random
 
-from flask import current_app
+from redis import Redis
 
 
-def get_redis():
-    return current_app.extensions['split'].redis
+redis = Redis()
 
 
 class Alternative(object):
     def __init__(self, name, experiment_name):
-        self.redis = get_redis()
         self.experiment_name = experiment_name
         if isinstance(name, tuple):
             self.name, self.weight = name
@@ -31,10 +29,10 @@ class Alternative(object):
             self.weight = 1
 
     def _get_participant_count(self):
-        return int(self.redis.hget(self.key, 'participant_count') or 0)
+        return int(redis.hget(self.key, 'participant_count') or 0)
 
     def _set_participant_count(self, count):
-        self.redis.hset(self.key, 'participant_count', int(count))
+        redis.hset(self.key, 'participant_count', int(count))
 
     participant_count = property(
         _get_participant_count,
@@ -42,10 +40,10 @@ class Alternative(object):
     )
 
     def _get_completed_count(self):
-        return int(self.redis.hget(self.key, 'completed_count') or 0)
+        return int(redis.hget(self.key, 'completed_count') or 0)
 
     def _set_completed_count(self, count):
-        self.redis.hset(self.key, 'completed_count', int(count))
+        redis.hset(self.key, 'completed_count', int(count))
 
     completed_count = property(
         _get_completed_count,
@@ -53,10 +51,10 @@ class Alternative(object):
     )
 
     def increment_participation(self):
-        self.redis.hincrby(self.key, 'participant_count', 1)
+        redis.hincrby(self.key, 'participant_count', 1)
 
     def increment_completion(self):
-        self.redis.hincrby(self.key, 'completed_count', 1)
+        redis.hincrby(self.key, 'completed_count', 1)
 
     @property
     def is_control(self):
@@ -73,17 +71,17 @@ class Alternative(object):
         return Experiment.find(self.experiment_name)
 
     def save(self):
-        self.redis.hsetnx(self.key, 'participant_count', 0)
-        self.redis.hsetnx(self.key, 'completed_count', 0)
+        redis.hsetnx(self.key, 'participant_count', 0)
+        redis.hsetnx(self.key, 'completed_count', 0)
 
     def reset(self):
-        self.redis.hmset(self.key, {
+        redis.hmset(self.key, {
             'participant_count': 0,
             'completed_count': 0
         })
 
     def delete(self):
-        self.redis.delete(self.key)
+        redis.delete(self.key)
 
     @property
     def key(self):
@@ -138,7 +136,6 @@ class Alternative(object):
 
 class Experiment(object):
     def __init__(self, name, *alternative_names):
-        self.redis = get_redis()
         self.name = name
         self.alternatives = [
             Alternative(alternative, name)
@@ -150,12 +147,12 @@ class Experiment(object):
         return self.alternatives[0]
 
     def _get_winner(self):
-        winner = self.redis.hget('experiment_winner', self.name)
+        winner = redis.hget('experiment_winner', self.name)
         if winner:
             return Alternative(winner, self.name)
 
     def _set_winner(self, winner_name):
-        self.redis.hset('experiment_winner', self.name, winner_name)
+        redis.hset('experiment_winner', self.name, winner_name)
 
     winner = property(
         _get_winner,
@@ -163,11 +160,11 @@ class Experiment(object):
     )
 
     def reset_winner(self):
-        self.redis.hdel('experiment_winner', self.name)
+        redis.hdel('experiment_winner', self.name)
 
     @property
     def start_time(self):
-        t = self.redis.hget('experiment_start_times', self.name)
+        t = redis.hget('experiment_start_times', self.name)
         if t:
             return datetime.strptime(t, '%Y-%m-%dT%H:%M:%S')
 
@@ -196,10 +193,10 @@ class Experiment(object):
 
     @property
     def version(self):
-        return int(self.redis.get('%s:version' % self.name) or 0)
+        return int(redis.get('%s:version' % self.name) or 0)
 
     def increment_version(self):
-        self.redis.incr('%s:version' % self.name)
+        redis.incr('%s:version' % self.name)
 
     @property
     def key(self):
@@ -218,33 +215,33 @@ class Experiment(object):
         for alternative in self.alternatives:
             alternative.delete()
         self.reset_winner()
-        self.redis.srem('experiments', self.name)
-        self.redis.delete(self.name)
+        redis.srem('experiments', self.name)
+        redis.delete(self.name)
         self.increment_version()
 
     @property
     def is_new_record(self):
-        return self.name not in self.redis
+        return self.name not in redis
 
     def save(self):
         if self.is_new_record:
             start_time = self._get_time().isoformat()[:19]
-            self.redis.sadd('experiments', self.name)
-            self.redis.hset('experiment_start_times', self.name, start_time)
+            redis.sadd('experiments', self.name)
+            redis.hset('experiment_start_times', self.name, start_time)
             for alternative in reversed(self.alternatives):
-                self.redis.lpush(self.name, alternative.name)
+                redis.lpush(self.name, alternative.name)
 
     @classmethod
     def load_alternatives_for(cls, name):
-        return get_redis().lrange(name, 0, -1)
+        return redis.lrange(name, 0, -1)
 
     @classmethod
     def all(cls):
-        return [cls.find(e) for e in get_redis().smembers('experiments')]
+        return [cls.find(e) for e in redis.smembers('experiments')]
 
     @classmethod
     def find(cls, name):
-        if name in get_redis():
+        if name in redis:
             return cls(name, *cls.load_alternatives_for(name))
 
     @classmethod
