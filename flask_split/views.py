@@ -19,7 +19,8 @@ from .models import Alternative, Experiment
 root = os.path.abspath(os.path.dirname(__file__))
 split = Blueprint('split', 'flask.ext.split',
     template_folder=os.path.join(root, 'templates'),
-    static_folder=os.path.join(root, 'static')
+    static_folder=os.path.join(root, 'static'),
+    url_prefix='/split'
 )
 
 
