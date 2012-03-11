@@ -1,0 +1,3 @@
+recursive-exclude tests *.pyc
+recursive-include flask_split/templates *.html
+recursive-include flask_split/static *
