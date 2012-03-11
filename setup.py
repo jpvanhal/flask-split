@@ -20,7 +20,7 @@ setup(
     name='Flask-Split',
     version='0.1.0',
     url='http://github.com/jpvanhal/flask-split',
-    license='BSD',
+    license='MIT',
     author='Janne Vanhala',
     author_email='janne.vanhala@gmail.com',
     description='A/B testing for your Flask application',
