@@ -1,3 +1,14 @@
+# -*- coding: utf-8 -*-
+"""
+    flask.ext.split.views
+    ~~~~~~~~~~~~~~~~~~~~~
+
+    This module provides the views for Flask-Split's web interface.
+
+    :copyright: (c) 2012 by Janne Vanhala.
+    :license: MIT, see LICENSE for more details.
+"""
+
 import os
 
 from flask import Blueprint, redirect, render_template, request, url_for
@@ -20,6 +31,7 @@ def inject_version():
 
 @split.route('/')
 def index():
+    """Render a dashboard that lists all active experiments."""
     return render_template('split/index.html',
         experiments=Experiment.all()
     )
@@ -27,6 +39,7 @@ def index():
 
 @split.route('/<experiment>', methods=['POST'])
 def set_experiment_winner(experiment):
+    """Mark an alternative as the winner of the experiment."""
     experiment = Experiment.find(experiment)
     if experiment:
         alternative_name = request.form.get('alternative')
@@ -38,6 +51,7 @@ def set_experiment_winner(experiment):
 
 @split.route('/<experiment>/reset', methods=['POST'])
 def reset_experiment(experiment):
+    """Delete all data for an experiment."""
     experiment = Experiment.find(experiment)
     if experiment:
         experiment.reset()
@@ -46,6 +60,7 @@ def reset_experiment(experiment):
 
 @split.route('/<experiment>/delete', methods=['POST'])
 def delete_experiment(experiment):
+    """Delete an experiment and all its data."""
     experiment = Experiment.find(experiment)
     if experiment:
         experiment.delete()

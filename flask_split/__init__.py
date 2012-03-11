@@ -1,3 +1,14 @@
+# -*- coding: utf-8 -*-
+"""
+    flask.ext.split
+    ~~~~~~~~~~~~~~~
+
+    A/B testing for your Flask application.
+
+    :copyright: (c) 2012 by Janne Vanhala.
+    :license: MIT, see LICENSE for more details.
+"""
+
 import re
 
 from flask import current_app, request, session

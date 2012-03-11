@@ -1,3 +1,14 @@
+# -*- coding: utf-8 -*-
+"""
+    flask.ext.split.models
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+    This module provides the models for experiments and alternatives.
+
+    :copyright: (c) 2012 by Janne Vanhala.
+    :license: MIT, see LICENSE for more details.
+"""
+
 from datetime import datetime
 from math import sqrt
 from random import random
