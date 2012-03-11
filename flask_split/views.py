@@ -9,14 +9,17 @@
     :license: MIT, see LICENSE for more details.
 """
 
+import os
+
 from flask import Blueprint, redirect, render_template, request, url_for
 
 from .models import Alternative, Experiment
 
 
+root = os.path.abspath(os.path.dirname(__file__))
 split = Blueprint('split', 'flask.ext.split',
-    template_folder='templates',
-    static_folder='static'
+    template_folder=os.path.join(root, 'templates'),
+    static_folder=os.path.join(root, 'static')
 )
 
 
