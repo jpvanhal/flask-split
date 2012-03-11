@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask
-from flask.ext.split import split
-from flask.ext.split.models import redis
+from flask_split import split
+from flask_split.models import redis
 
 
 class TestCase(object):

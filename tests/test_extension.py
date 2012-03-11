@@ -3,9 +3,9 @@
 from __future__ import with_statement
 
 from flask import session
-from flask.ext.split import ab_test, finished
-from flask.ext.split.core import _get_session
-from flask.ext.split.models import Alternative, Experiment
+from flask_split import ab_test, finished
+from flask_split.core import _get_session
+from flask_split.models import Alternative, Experiment
 from flexmock import flexmock
 from pytest import raises
 from redis import ConnectionError, Redis
