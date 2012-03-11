@@ -21,3 +21,5 @@ Resources
 - `Documentation <http://flask-split.readthedocs.org/>`_
 - `Issue Tracker <http://github.com/jpvanhal/flask-split/issues>`_
 - `Code <http://github.com/jpvanhal/flask-split/>`_
+- `Development Version
+  <http://github.com/jpvanhal/flask-split/zipball/master#egg=Flask-Split-dev>`_
