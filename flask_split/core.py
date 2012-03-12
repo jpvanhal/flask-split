@@ -50,6 +50,14 @@ def init_app(state):
         'finished': finished
     })
 
+    @app.template_filter()
+    def percentage(number):
+        number *= 100
+        if abs(number) < 10:
+            return "%.1f%%" % round(number, 1)
+        else:
+            return "%d%%" % round(number)
+
 
 def ab_test(experiment_name, *alternatives):
     """

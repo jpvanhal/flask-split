@@ -50,15 +50,17 @@
           <td>{{ alternative.participant_count - alternative.completed_count }}</td>
           <td>{{ alternative.completed_count }}</td>
           <td>
-            {{ 100 * alternative.conversion_rate }}%
+            {{ alternative.conversion_rate|percentage }}
             {% if experiment.control.conversion_rate > 0 and not alternative.is_control %}
-              <span class="label label-success">
-                +{{ 100 * ((alternative.conversion_rate / experiment.control.conversion_rate) - 1)}}%
-              </span>
-            {% elif alternative.conversion_rate < experiment.control.conversion_rate %}
-              <span class="label label-danger">
-                {{ 100 * ((alternative.conversion_rate / experiment.control.conversion_rate) - 1)}}%
-              </span>
+              {% if alternative.conversion_rate > experiment.control.conversion_rate %}
+                <span class="label label-success">
+                  +{{ ((alternative.conversion_rate / experiment.control.conversion_rate) - 1)|percentage }}
+                </span>
+              {% elif alternative.conversion_rate < experiment.control.conversion_rate %}
+                <span class="label label-important">
+                  {{ ((alternative.conversion_rate / experiment.control.conversion_rate) - 1)|percentage }}
+                </span>
+              {% endif %}
             {% endif %}
           </td>
           <td>
