@@ -121,8 +121,10 @@ class Alternative(object):
         z = abs(round(z, 3))
         if z == 0:
             return 'no change'
-        elif z < 1.96:
+        elif z < 1.64:
             return 'no confidence'
+        elif z < 1.96:
+            return '90% confidence'
         elif z < 2.57:
             return '95% confidence'
         elif z < 3.29:
