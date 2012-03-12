@@ -8,7 +8,9 @@ Here you can see the full list of changes between each Flask-Split release.
 
 - Fixed user's participation to an experiment not clearing out from their
   session, when experiment version was greater than 0.
-- Fixed :exc:`ZeroDivisionError` in altenative's Z-score calculation.
+- Fixed :exc:`ZeroDivisionError` in altenative's z-score calculation.
+- Fixed conversion rate difference to control rendering.
+- More sensible rounding of percentage values in the dashboard.
 - Added 90% confidence level.
 - Removed a debug print from :meth:`Experiment.find_or_create`.
 
