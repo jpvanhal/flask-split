@@ -82,6 +82,16 @@ class TestExtension(TestCase):
         finished('link_color')
         assert session['split'] == {}
 
+    def test_finished_clears_test_session_when_version_is_greater_than_0(self):
+        experiment = Experiment.find_or_create('link_color', 'blue', 'red')
+        experiment.increment_version()
+
+        alternative_name = ab_test('link_color', 'blue', 'red')
+        assert session['split'] == {"link_color:1": alternative_name}
+
+        finished('link_color')
+        assert session['split'] == {}
+
     def test_finished_does_not_clear_out_the_users_session_if_reset_is_false(self):
         Experiment.find_or_create('link_color', 'blue', 'red')
         alternative_name = ab_test('link_color', 'blue', 'red')

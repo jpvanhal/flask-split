@@ -114,7 +114,7 @@ def finished(experiment_name, reset=True):
             alternative = Alternative(alternative_name, experiment_name)
             alternative.increment_completion()
             if reset:
-                _get_session().pop(experiment_name, None)
+                _get_session().pop(experiment.key, None)
                 session.modified = True
     except ConnectionError:
         if not current_app.config['SPLIT_DB_FAILOVER']:
