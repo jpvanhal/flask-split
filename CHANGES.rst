@@ -3,8 +3,8 @@ Changelog
 
 Here you can see the full list of changes between each Flask-Split release.
 
-0.1.1 (not released)
-^^^^^^^^^^^^^^^^^^^^
+0.1.1 (2012-03-12)
+^^^^^^^^^^^^^^^^^^
 
 - Fixed user's participation to an experiment not clearing out from their
   session, when experiment version was greater than 0.

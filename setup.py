@@ -18,7 +18,7 @@ class PyTest(Command):
 
 setup(
     name='Flask-Split',
-    version='0.1.0',
+    version='0.1.1',
     url='http://github.com/jpvanhal/flask-split',
     license='MIT',
     author='Janne Vanhala',
