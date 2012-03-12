@@ -3,7 +3,7 @@ Changelog
 
 Here you can see the full list of changes between each Flask-Split release.
 
-0.2.0 (not released)
+0.1.1 (not released)
 ^^^^^^^^^^^^^^^^^^^^
 
 - Removed a debug print from Experiment.find_or_create().

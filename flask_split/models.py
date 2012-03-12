@@ -95,26 +95,23 @@ class Alternative(object):
         if control.name == alternative.name:
             return None
 
-        # the CTR within the experiment split
-        ctr_e = alternative.conversion_rate
-        # the CTR within the control split
-        ctr_c = control.conversion_rate
+        cr = alternative.conversion_rate
+        crc = control.conversion_rate
 
-        # the number of impressions within the experiment split
-        e = alternative.participant_count
-        # the number of impressions within the control split
-        c = control.participant_count
+        n = alternative.participant_count
+        nc = control.participant_count
 
-        if ctr_c == 0:
-            return 0
+        if n == 0 or nc == 0:
+            return None
 
-        standard_deviation = sqrt(
-            (ctr_e / ctr_c ** 3) *
-            ((e * ctr_e) + (c * ctr_c) - (ctr_c * ctr_e) * (c + e)) /
-            (c * e)
-        )
+        mean = cr - crc
+        var_cr = cr * (1 - cr) / float(n)
+        var_crc = crc * (1 - crc) / float(nc)
 
-        return ((ctr_e / ctr_c) - 1) / standard_deviation
+        if var_cr + var_crc == 0:
+            return None
+
+        return mean / sqrt(var_cr + var_crc)
 
     @property
     def confidence_level(self):

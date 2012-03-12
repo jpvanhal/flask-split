@@ -77,15 +77,57 @@ class TestAlternative(TestCase):
         alternative.completed_count = 4
         assert alternative.conversion_rate == 0.4
 
-    def test_z_score_is_zero_when_the_control_has_no_conversions(self):
-        experiment = Experiment('link_color', 'blue', 'red')
-        experiment.save()
-        alternative = Alternative('red', 'link_color')
-        assert alternative.z_score == 0
-
     def test_z_score_is_none_for_the_control(self):
         experiment = Experiment.find_or_create('link_color', 'blue', 'red')
         assert experiment.control.z_score is None
+
+    def test_z_score_is_none_when_the_control_has_no_participations(self):
+        experiment = Experiment('link_color', 'blue', 'red')
+        experiment.save()
+        alternative = Alternative('red', 'link_color')
+        assert alternative.z_score is None
+
+    def test_z_score_is_none_when_alternative_has_no_participations(self):
+        experiment = Experiment.find_or_create('link_color', 'blue', 'red')
+        experiment.save()
+        alternative = Alternative('red', 'link_color')
+        assert alternative.z_score is None
+
+    def test_z_score_when_control_and_alternative_have_perfect_conversion(self):
+        experiment = Experiment.find_or_create('link_color', 'blue', 'red')
+        experiment.save()
+        control = Alternative('blue', 'link_color')
+        control.completed_count = 10
+        control.participant_count = 10
+        alternative = Alternative('red', 'link_color')
+        alternative.completed_count = 8
+        alternative.participant_count = 8
+        assert alternative.z_score is None
+
+    def test_z_score(self):
+        Experiment.find_or_create('Treatment',
+            'Control', 'Treatment A', 'Treatment B', 'Treatment C')
+
+        control = Alternative('Control', 'Treatment')
+        control.participant_count = 182
+        control.completed_count = 35
+
+        treatment_a = Alternative('Treatment A', 'Treatment')
+        treatment_a.participant_count = 180
+        treatment_a.completed_count = 45
+
+        treatment_b = Alternative('Treatment B', 'Treatment')
+        treatment_b.participant_count = 189
+        treatment_b.completed_count = 28
+
+        treatment_c = Alternative('Treatment C', 'Treatment')
+        treatment_c.participant_count = 188
+        treatment_c.completed_count = 61
+
+        assert control.z_score is None
+        assert round(treatment_a.z_score, 2) == 1.33
+        assert round(treatment_b.z_score, 2) == -1.13
+        assert round(treatment_c.z_score, 2) == 2.94
 
 
 class TestExperiment(TestCase):
