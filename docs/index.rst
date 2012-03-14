@@ -32,8 +32,8 @@ APT::
 Quickstart
 ----------
 
-In order to start using Flask-Split, you need to first need to register
-the Flask-Split blueprint to your Flask application::
+In order to start using Flask-Split, you need to first register the Flask-Split
+blueprint to your Flask application::
 
     from flask import Flask
     from flask.ext.split import split
