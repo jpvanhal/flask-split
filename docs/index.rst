@@ -82,62 +82,54 @@ ways.
 
 A list of configuration keys currently understood by the extension:
 
-====================================== ========================================
-``SPLIT_ALLOW_MULTIPLE_EXPERIMENTS``   If set to `True` Flask-Split will
-                                       allow users to participate in multiple
-                                       experiments.
+``SPLIT_ALLOW_MULTIPLE_EXPERIMENTS``
+    If set to `True` Flask-Split will allow users to participate in multiple
+    experiments.
 
-                                       If set to `False` Flask-Split will avoid
-                                       users participating in multiple
-                                       experiments at once.  This means you are
-                                       less likely to skew results by adding in
-                                       more  variation to your tests.
+    If set to `False` Flask-Split will avoid users participating in multiple
+    experiments at once.  This means you are less likely to skew results by
+    adding in more  variation to your tests.
 
-                                       Defaults to `False`.
+    Defaults to `False`.
 
-``SPLIT_IGNORE_IP_ADDRESSES``          Specifies a list of IP addresses to
-                                       ignore visits from.  You may wish to use
-                                       this to prevent yourself or people from
-                                       your office from skewing the results.
+``SPLIT_IGNORE_IP_ADDRESSES``
+    Specifies a list of IP addresses to ignore visits from.  You may wish to
+    use this to prevent yourself or people from your office from skewing the
+    results.
 
-                                       Defaults to ``[]``, i.e. no IP addresses
-                                       are ignored by default.
+    Defaults to ``[]``, i.e. no IP addresses are ignored by default.
 
-``SPLIT_ROBOT_REGEX``                  Flask-Split ignores visitors that appear
-                                       to be robots or spider in order to avoid
-                                       them from skeweing any results.
-                                       Flask-Split detects robots and spiders
-                                       by comparing the user agent of each
-                                       request with the regular expression in
-                                       this setting.
+``SPLIT_ROBOT_REGEX``
+    Flask-Split ignores visitors that appear to be robots or spider in order to
+    avoid them from skeweing any results. Flask-Split detects robots and
+    spiders by comparing the user agent of each request with the regular
+    expression in this setting.
 
-                                       Defaults to::
+    Defaults to::
 
-                                            r"""
-                                            (?:i)\b(
-                                                Baidu|
-                                                Gigabot|
-                                                Googlebot|
-                                                libwww-perl|
-                                                lwp-trivial|
-                                                msnbot|
-                                                SiteUptime|
-                                                Slurp|
-                                                WordPress|
-                                                ZIBB|
-                                                ZyBorg
-                                            )\b
-                                            """
+        r"""
+        (?:i)\b(
+            Baidu|
+            Gigabot|
+            Googlebot|
+            libwww-perl|
+            lwp-trivial|
+            msnbot|
+            SiteUptime|
+            Slurp|
+            WordPress|
+            ZIBB|
+            ZyBorg
+        )\b
+        """
 
-``SPLIT_DB_FAILOVER``                  If set to `True` Flask-Split will not
-                                       let :meth:`ab_test` or :meth:`finished`
-                                       to crash in case of a Redis connection
-                                       error.  In that case :meth:`ab_test`
-                                       always delivers the first alternative
-                                       i.e. the control.
+``SPLIT_DB_FAILOVER``
+    If set to `True` Flask-Split will not let :meth:`ab_test` or
+    :meth:`finished` to crash in case of a Redis connection error.  In that
+    case :meth:`ab_test` always delivers the first alternative i.e. the
+    control.
 
-                                       Defaults to `True`.
-====================================== ========================================
+    Defaults to `True`.
 
 
 Web Interface
