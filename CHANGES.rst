@@ -3,6 +3,11 @@ Changelog
 
 Here you can see the full list of changes between each Flask-Split release.
 
+0.1.2 (2012-03-15)
+^^^^^^^^^^^^^^^^^^
+
+- Fixed default value for ``SPLIT_DB_FAILOVER`` not being set.
+
 0.1.1 (2012-03-12)
 ^^^^^^^^^^^^^^^^^^
 

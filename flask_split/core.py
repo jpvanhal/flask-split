@@ -28,6 +28,7 @@ def init_app(state):
     app = state.app
 
     app.config.setdefault('SPLIT_ALLOW_MULTIPLE_EXPERIMENTS', False)
+    app.config.setdefault('SPLIT_DB_FAILOVER', False)
     app.config.setdefault('SPLIT_IGNORE_IP_ADDRESSES', [])
     app.config.setdefault('SPLIT_ROBOT_REGEX', r"""
         (?i)\b(

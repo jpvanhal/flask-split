@@ -14,6 +14,25 @@ from . import TestCase
 
 
 class TestExtension(TestCase):
+    def test_provides_defaults_for_settings(self):
+        assert self.app.config['SPLIT_IGNORE_IP_ADDRESSES'] == []
+        assert self.app.config['SPLIT_ROBOT_REGEX'].strip() == r"""
+        (?i)\b(
+            Baidu|
+            Gigabot|
+            Googlebot|
+            libwww-perl|
+            lwp-trivial|
+            msnbot|
+            SiteUptime|
+            Slurp|
+            WordPress|
+            ZIBB|
+            ZyBorg
+        )\b
+        """.strip()
+        assert self.app.config['SPLIT_DB_FAILOVER'] is False
+        assert self.app.config['SPLIT_ALLOW_MULTIPLE_EXPERIMENTS'] is False
 
     def test_ab_test_assigns_random_alternative_to_a_new_user(self):
         ab_test('link_color', 'blue', 'red')
