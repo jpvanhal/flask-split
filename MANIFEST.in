@@ -1,3 +1,9 @@
+include CHANGES.rst LICENSE README.rst
+recursive-include docs *
+recursive-exclude docs *.pyc
+recursive-include tests *
 recursive-exclude tests *.pyc
 recursive-include flask_split/templates *.html
 recursive-include flask_split/static *
+prune docs/_build
+exclude docs/_themes/.git
