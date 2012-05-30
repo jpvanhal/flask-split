@@ -120,10 +120,15 @@ def finished(experiment_name, reset=True):
             return
         alternative_name = _get_session().get(experiment.key)
         if alternative_name:
-            alternative = Alternative(alternative_name, experiment_name)
-            alternative.increment_completion()
+            if '%s:finished' % experiment.key not in _get_session():
+                alternative = Alternative(alternative_name, experiment_name)
+                alternative.increment_completion()
             if reset:
                 _get_session().pop(experiment.key, None)
+                _get_session().pop('%s:finished' % experiment.key, None)
+                session.modified = True
+            else:
+                _get_session()['%s:finished' % experiment.key] = 1
                 session.modified = True
     except ConnectionError:
         if not current_app.config['SPLIT_DB_FAILOVER']:
