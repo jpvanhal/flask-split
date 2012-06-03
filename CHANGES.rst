@@ -3,7 +3,7 @@ Changelog
 
 Here you can see the full list of changes between each Flask-Split release.
 
-0.2.0 (unreleased)
+0.2.0 (2012-06-03)
 ^^^^^^^^^^^^^^^^^^
 
 - Added ``REDIS_URL`` configuration variable for configuring the Redis
