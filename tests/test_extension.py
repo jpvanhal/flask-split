@@ -119,18 +119,31 @@ class TestExtension(TestCase):
         finished('link_color', reset=False)
         assert session['split'] == {
             "link_color": alternative_name,
-            "link_color:finished": 1
         }
+        assert session['split_finished'] == set(['link_color'])
 
     def test_finished_does_nothing_if_experiment_was_not_started_by_the_user(self):
         session['split'] = None
         finished('some_experiment_not_started_by_the_user')
 
-    def test_finished_does_not_incr_completed_twice_if_reset_is_false(self):
+    def test_finished_dont_incr_completed_twice_if_reset_is_false(self):
         Experiment.find_or_create('link_color', 'blue', 'red')
-        alternative_name = ab_test('link_color', 'blue', 'red')
 
+        alternative_name = ab_test('link_color', 'blue', 'red')
         finished('link_color', reset=False)
+        finished('link_color', reset=False)
+
+        completion_count = Alternative(alternative_name, 'link_color').completed_count
+        assert completion_count == 1
+
+    def test_finished_does_not_incr_completed_twice_if_version_is_greater_than_0_and_reset_is_false(self):
+        experiment = Experiment.find_or_create('link_color', 'blue', 'red')
+        experiment.increment_version()
+
+        alternative_name = ab_test('link_color', 'blue', 'red')
+        finished('link_color', reset=False)
+
+        alternative_name = ab_test('link_color', 'blue', 'red')
         finished('link_color', reset=False)
 
         completion_count = Alternative(alternative_name, 'link_color').completed_count

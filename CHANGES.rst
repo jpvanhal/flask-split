@@ -3,6 +3,14 @@ Changelog
 
 Here you can see the full list of changes between each Flask-Split release.
 
+0.1.3 (unreleased)
+^^^^^^^^^^^^^^^^^^
+
+- Fixed :func:`finished` incrementing alternative's completion count multiple
+  times, when the test is not reset after it has been finished. The fix for
+  this issue in the previous release did not work, when the version of the test
+  was greater than 0.
+
 0.1.3 (2012-05-30)
 ^^^^^^^^^^^^^^^^^^
 
