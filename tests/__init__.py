@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask
-from flask.ext.split import split
+from flask_split import split
 from redis import Redis
 
 
