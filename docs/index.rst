@@ -82,6 +82,10 @@ ways.
 
 A list of configuration keys currently understood by the extension:
 
+``REDIS_URL``
+    The database URL that should be used for the Redis connection. Defaults to
+    ``'redis://localhost:6379'``.
+
 ``SPLIT_ALLOW_MULTIPLE_EXPERIMENTS``
     If set to `True` Flask-Split will allow users to participate in multiple
     experiments.

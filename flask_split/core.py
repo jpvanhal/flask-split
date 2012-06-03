@@ -15,6 +15,7 @@ from flask import current_app, request, session
 from redis import ConnectionError
 
 from .models import Alternative, Experiment
+from .utils import _get_redis_connection
 from .views import split
 
 
@@ -74,9 +75,10 @@ def ab_test(experiment_name, *alternatives):
         default each alternative has the weight of 1.  The first alternative
         is the control.  Every experiment must have at least  two alternatives.
     """
+    redis = _get_redis_connection()
     try:
         experiment = Experiment.find_or_create(
-            experiment_name, *alternatives)
+            redis, experiment_name, *alternatives)
         if experiment.winner:
             return experiment.winner.name
         else:
@@ -114,8 +116,9 @@ def finished(experiment_name, reset=True):
     """
     if _exclude_visitor():
         return
+    redis = _get_redis_connection()
     try:
-        experiment = Experiment.find(experiment_name)
+        experiment = Experiment.find(redis, experiment_name)
         if not experiment:
             return
         alternative_name = _get_session().get(experiment.key)
@@ -123,7 +126,7 @@ def finished(experiment_name, reset=True):
             if 'split_finished' not in session:
                 session['split_finished'] = set()
             if experiment.key not in session['split_finished']:
-                alternative = Alternative(alternative_name, experiment_name)
+                alternative = Alternative(redis, alternative_name, experiment_name)
                 alternative.increment_completion()
             if reset:
                 _get_session().pop(experiment.key, None)

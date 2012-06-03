@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask
-from flask_split import split
-from flask_split.models import redis
+from flask.ext.split import split
+from redis import Redis
 
 
 class TestCase(object):
     def setup_method(self, method):
-        redis.flushall()
+        self.redis = Redis()
+        self.redis.flushall()
         self.app = Flask(__name__)
         self.app.debug = True
         self.app.secret_key = 'very secret'

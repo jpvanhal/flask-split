@@ -14,6 +14,7 @@ import os
 from flask import Blueprint, redirect, render_template, request, url_for
 
 from .models import Alternative, Experiment
+from .utils import _get_redis_connection
 
 
 root = os.path.abspath(os.path.dirname(__file__))
@@ -33,18 +34,20 @@ def inject_version():
 @split.route('/')
 def index():
     """Render a dashboard that lists all active experiments."""
+    redis = _get_redis_connection()
     return render_template('split/index.html',
-        experiments=Experiment.all()
+        experiments=Experiment.all(redis)
     )
 
 
 @split.route('/<experiment>', methods=['POST'])
 def set_experiment_winner(experiment):
     """Mark an alternative as the winner of the experiment."""
-    experiment = Experiment.find(experiment)
+    redis = _get_redis_connection()
+    experiment = Experiment.find(redis, experiment)
     if experiment:
         alternative_name = request.form.get('alternative')
-        alternative = Alternative(alternative_name, experiment.name)
+        alternative = Alternative(redis, alternative_name, experiment.name)
         if alternative.name in experiment.alternative_names:
             experiment.winner = alternative.name
     return redirect(url_for('.index'))
@@ -53,7 +56,8 @@ def set_experiment_winner(experiment):
 @split.route('/<experiment>/reset', methods=['POST'])
 def reset_experiment(experiment):
     """Delete all data for an experiment."""
-    experiment = Experiment.find(experiment)
+    redis = _get_redis_connection()
+    experiment = Experiment.find(redis, experiment)
     if experiment:
         experiment.reset()
     return redirect(url_for('.index'))
@@ -62,7 +66,8 @@ def reset_experiment(experiment):
 @split.route('/<experiment>/delete', methods=['POST'])
 def delete_experiment(experiment):
     """Delete an experiment and all its data."""
-    experiment = Experiment.find(experiment)
+    redis = _get_redis_connection()
+    experiment = Experiment.find(redis, experiment)
     if experiment:
         experiment.delete()
     return redirect(url_for('.index'))
