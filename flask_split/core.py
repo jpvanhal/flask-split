@@ -126,7 +126,8 @@ def finished(experiment_name, reset=True):
             if 'split_finished' not in session:
                 session['split_finished'] = set()
             if experiment.key not in session['split_finished']:
-                alternative = Alternative(redis, alternative_name, experiment_name)
+                alternative = Alternative(
+                    redis, alternative_name, experiment_name)
                 alternative.increment_completion()
             if reset:
                 _get_session().pop(experiment.key, None)

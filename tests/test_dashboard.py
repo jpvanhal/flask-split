@@ -24,11 +24,8 @@ class TestDashboard(TestCase):
         response = self.client.post('/split/link_color/reset')
         assert_redirects(response, '/split/')
 
-        new_red_count = Alternative(self.redis, 'red', 'link_color').participant_count
-        new_blue_count = Alternative(self.redis, 'blue', 'link_color').participant_count
-
-        assert new_blue_count == 0
-        assert new_red_count == 0
+        assert red.participant_count == 0
+        assert blue.participant_count == 0
 
     def test_reset_a_non_existing_experiment(self):
         response = self.client.post('/split/foobar/reset')
@@ -45,30 +42,37 @@ class TestDashboard(TestCase):
         assert_redirects(response, '/split/')
 
     def test_mark_an_alternative_as_the_winner(self):
-        experiment = Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
+        experiment = Experiment.find_or_create(
+            self.redis, 'link_color', 'blue', 'red')
         assert experiment.winner is None
 
-        response = self.client.post('/split/link_color', data={'alternative': 'red'})
+        response = self.client.post('/split/link_color',
+            data={'alternative': 'red'})
         assert_redirects(response, '/split/')
 
         assert experiment.winner.name == 'red'
 
     def test_mark_a_non_existing_alternative_as_the_winner(self):
-        experiment = Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
+        experiment = Experiment.find_or_create(
+            self.redis, 'link_color', 'blue', 'red')
         assert experiment.winner is None
 
-        response = self.client.post('/split/link_color', data={'alternative': 'foobar'})
+        response = self.client.post('/split/link_color',
+            data={'alternative': 'foobar'})
         assert_redirects(response, '/split/')
 
         assert experiment.winner is None
 
-    def test_mark_an_alternative_as_the_winner_for_non_existing_experiment(self):
-        response = self.client.post('/split/foobar', data={'alternative': 'red'})
+    def test_mark_alternative_as_winner_for_non_existing_experiment(self):
+        response = self.client.post('/split/foobar',
+            data={'alternative': 'red'})
         assert_redirects(response, '/split/')
 
     def test_displays_the_start_date(self):
         experiment_start_time = datetime(2011, 7, 7)
-        flexmock(Experiment).should_receive('_get_time').and_return(experiment_start_time)
+        (flexmock(Experiment)
+            .should_receive('_get_time')
+            .and_return(experiment_start_time))
         Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
         response = self.client.get('/split/')
         assert '2011-07-07' in response.data

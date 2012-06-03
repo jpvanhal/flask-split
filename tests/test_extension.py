@@ -41,13 +41,16 @@ class TestExtension(TestCase):
     def test_ab_test_increments_participation_counter_for_new_user(self):
         Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
 
-        previous_red_count = Alternative(self.redis, 'red', 'link_color').participant_count
-        previous_blue_count = Alternative(self.redis, 'blue', 'link_color').participant_count
+        red = Alternative(self.redis, 'red', 'link_color')
+        blue = Alternative(self.redis, 'blue', 'link_color')
+
+        previous_red_count = red.participant_count
+        previous_blue_count = blue.participant_count
 
         ab_test('link_color', 'blue', 'red')
 
-        new_red_count = Alternative(self.redis, 'red', 'link_color').participant_count
-        new_blue_count = Alternative(self.redis, 'blue', 'link_color').participant_count
+        new_red_count = red.participant_count
+        new_blue_count = blue.participant_count
 
         assert (new_red_count + new_blue_count ==
             previous_red_count + previous_blue_count + 1)
@@ -59,7 +62,8 @@ class TestExtension(TestCase):
         assert alternative == repeat_alternative
 
     def test_ab_test_always_returns_the_winner_if_one_is_present(self):
-        experiment = Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
+        experiment = Experiment.find_or_create(
+            self.redis, 'link_color', 'blue', 'red')
         experiment.winner = "orange"
 
         assert ab_test('link_color', 'blue', 'red') == 'orange'
@@ -77,7 +81,7 @@ class TestExtension(TestCase):
         small = Alternative(self.redis, 'small', 'button_size')
         assert small.participant_count == 0
 
-    def test_lets_user_participate_in_many_experiments_with_allow_multiple_experiments_option(self):
+    def test_can_participate_in_many_experiments_with_allow_multiple_experiments(self):
         self.app.config['SPLIT_ALLOW_MULTIPLE_EXPERIMENTS'] = True
         link_color = ab_test('link_color', 'blue', 'red')
         button_size = ab_test('button_size', 'small', 'big')
@@ -88,12 +92,13 @@ class TestExtension(TestCase):
     def test_finished_increments_completed_alternative_counter(self):
         Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
         alternative_name = ab_test('link_color', 'blue', 'red')
-        previous_completion_count = Alternative(self.redis, alternative_name, 'link_color').completed_count
+        alternative = Alternative(self.redis, alternative_name, 'link_color')
+        previous_completion_count = alternative.completed_count
         finished('link_color')
-        new_completion_count = Alternative(self.redis, alternative_name, 'link_color').completed_count
+        new_completion_count = alternative.completed_count
         assert new_completion_count == previous_completion_count + 1
 
-    def test_finished_clears_out_the_users_participation_from_their_session(self):
+    def test_finished_clears_out_users_participation_from_their_session(self):
         Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
         alternative_name = ab_test('link_color', 'blue', 'red')
 
@@ -102,7 +107,8 @@ class TestExtension(TestCase):
         assert session['split'] == {}
 
     def test_finished_clears_test_session_when_version_is_greater_than_0(self):
-        experiment = Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
+        experiment = Experiment.find_or_create(
+            self.redis, 'link_color', 'blue', 'red')
         experiment.increment_version()
 
         alternative_name = ab_test('link_color', 'blue', 'red')
@@ -111,7 +117,7 @@ class TestExtension(TestCase):
         finished('link_color')
         assert session['split'] == {}
 
-    def test_finished_does_not_clear_out_the_users_session_if_reset_is_false(self):
+    def test_finished_dont_clear_out_the_users_session_if_reset_is_false(self):
         Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
         alternative_name = ab_test('link_color', 'blue', 'red')
 
@@ -126,18 +132,20 @@ class TestExtension(TestCase):
         session['split'] = None
         finished('some_experiment_not_started_by_the_user')
 
-    def test_finished_dont_incr_completed_twice_if_reset_is_false(self):
+    def test_finished_dont_incr_completed_twice_if_no_reset(self):
         Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
 
         alternative_name = ab_test('link_color', 'blue', 'red')
         finished('link_color', reset=False)
         finished('link_color', reset=False)
 
-        completion_count = Alternative(self.redis, alternative_name, 'link_color').completed_count
+        alternative = Alternative(self.redis, alternative_name, 'link_color')
+        completion_count = alternative.completed_count
         assert completion_count == 1
 
-    def test_finished_does_not_incr_completed_twice_if_version_is_greater_than_0_and_reset_is_false(self):
-        experiment = Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
+    def test_finished_dont_incr_completed_twice_if_ver_gt_0_and_no_reset(self):
+        experiment = Experiment.find_or_create(
+            self.redis, 'link_color', 'blue', 'red')
         experiment.increment_version()
 
         alternative_name = ab_test('link_color', 'blue', 'red')
@@ -146,20 +154,20 @@ class TestExtension(TestCase):
         alternative_name = ab_test('link_color', 'blue', 'red')
         finished('link_color', reset=False)
 
-        completion_count = Alternative(self.redis, alternative_name, 'link_color').completed_count
+        alternative = Alternative(self.redis, alternative_name, 'link_color')
+        completion_count = alternative.completed_count
         assert completion_count == 1
 
     def test_conversions_return_conversion_rates_for_alternatives(self):
         Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
         alternative_name = ab_test('link_color', 'blue', 'red')
 
-        previous_convertion_rate = Alternative(self.redis, alternative_name, 'link_color').conversion_rate
-        assert previous_convertion_rate == 0.0
+        alternative = Alternative(self.redis, alternative_name, 'link_color')
+        assert alternative.conversion_rate == 0.0
 
         finished('link_color')
 
-        new_convertion_rate = Alternative(self.redis, alternative_name, 'link_color').conversion_rate
-        assert new_convertion_rate == 1.0
+        assert alternative.conversion_rate == 1.0
 
 
 class TestExtensionWhenUserIsARobot(TestCase):
@@ -171,20 +179,24 @@ class TestExtensionWhenUserIsARobot(TestCase):
         )
 
     def test_ab_test_return_the_control(self):
-        experiment = Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
+        experiment = Experiment.find_or_create(
+            self.redis, 'link_color', 'blue', 'red')
         alternative = ab_test('link_color', 'blue', 'red')
         assert alternative == experiment.control.name
 
     def test_ab_test_does_not_increment_the_participation_count(self):
         Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
 
-        previous_red_count = Alternative(self.redis, 'red', 'link_color').participant_count
-        previous_blue_count = Alternative(self.redis, 'blue', 'link_color').participant_count
+        red = Alternative(self.redis, 'red', 'link_color')
+        blue = Alternative(self.redis, 'blue', 'link_color')
+
+        previous_red_count = red.participant_count
+        previous_blue_count = blue.participant_count
 
         ab_test('link_color', 'blue', 'red')
 
-        new_red_count = Alternative(self.redis, 'red', 'link_color').participant_count
-        new_blue_count = Alternative(self.redis, 'blue', 'link_color').participant_count
+        new_red_count = red.participant_count
+        new_blue_count = blue.participant_count
 
         assert (new_red_count + new_blue_count ==
             previous_red_count + previous_blue_count)
@@ -192,12 +204,13 @@ class TestExtensionWhenUserIsARobot(TestCase):
     def test_finished_does_not_increment_the_completed_count(self):
         Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
         alternative_name = ab_test('link_color', 'blue', 'red')
+        alternative = Alternative(self.redis, alternative_name, 'link_color')
 
-        previous_completion_count = Alternative(self.redis, alternative_name, 'link_color').completed_count
+        previous_completion_count = alternative.completed_count
 
         finished('link_color')
 
-        new_completion_count = Alternative(self.redis, alternative_name, 'link_color').completed_count
+        new_completion_count = alternative.completed_count
 
         assert new_completion_count == previous_completion_count
 
@@ -213,20 +226,24 @@ class TestExtensionWhenIPAddressIsIgnored(TestCase):
         })
 
     def test_ab_test_return_the_control(self):
-        experiment = Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
+        experiment = Experiment.find_or_create(
+            self.redis, 'link_color', 'blue', 'red')
         alternative = ab_test('link_color', 'blue', 'red')
         assert alternative == experiment.control.name
 
     def test_ab_test_does_not_increment_the_participation_count(self):
         Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
 
-        previous_red_count = Alternative(self.redis, 'red', 'link_color').participant_count
-        previous_blue_count = Alternative(self.redis, 'blue', 'link_color').participant_count
+        red = Alternative(self.redis, 'red', 'link_color')
+        blue = Alternative(self.redis, 'blue', 'link_color')
+
+        previous_red_count = red.participant_count
+        previous_blue_count = blue.participant_count
 
         ab_test('link_color', 'blue', 'red')
 
-        new_red_count = Alternative(self.redis, 'red', 'link_color').participant_count
-        new_blue_count = Alternative(self.redis, 'blue', 'link_color').participant_count
+        new_red_count = red.participant_count
+        new_blue_count = blue.participant_count
 
         assert (new_red_count + new_blue_count ==
             previous_red_count + previous_blue_count)
@@ -234,32 +251,36 @@ class TestExtensionWhenIPAddressIsIgnored(TestCase):
     def test_finished_does_not_increment_the_completed_count(self):
         Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
         alternative_name = ab_test('link_color', 'blue', 'red')
+        alternative = Alternative(self.redis, alternative_name, 'link_color')
 
-        previous_completion_count = Alternative(self.redis, alternative_name, 'link_color').completed_count
+        previous_completion_count = alternative.completed_count
 
         finished('link_color')
 
-        new_completion_count = Alternative(self.redis, alternative_name, 'link_color').completed_count
+        new_completion_count = alternative.completed_count
 
         assert new_completion_count == previous_completion_count
 
 
 class TestVersionedExperiments(TestCase):
     def test_uses_version_zero_if_no_version_is_present(self):
-        experiment = Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
+        experiment = Experiment.find_or_create(
+            self.redis, 'link_color', 'blue', 'red')
         alternative_name = ab_test('link_color', 'blue', 'red')
         assert experiment.version == 0
         assert session['split'] == {'link_color': alternative_name}
 
     def test_saves_the_version_of_the_experiment_to_the_session(self):
-        experiment = Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
+        experiment = Experiment.find_or_create(
+            self.redis, 'link_color', 'blue', 'red')
         experiment.reset()
         assert experiment.version == 1
         alternative_name = ab_test('link_color', 'blue', 'red')
         assert session['split'] == {'link_color:1': alternative_name}
 
     def test_loads_the_experiment_even_if_the_version_is_not_0(self):
-        experiment = Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
+        experiment = Experiment.find_or_create(
+            self.redis, 'link_color', 'blue', 'red')
         experiment.reset()
         assert experiment.version == 1
         alternative_name = ab_test('link_color', 'blue', 'red')
@@ -267,8 +288,9 @@ class TestVersionedExperiments(TestCase):
         return_alternative_name = ab_test('link_color', 'blue', 'red')
         assert return_alternative_name == alternative_name
 
-    def test_resets_the_session_of_a_user_on_an_older_version_of_the_experiment(self):
-        experiment = Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
+    def test_resets_users_session_on_an_older_version_of_the_experiment(self):
+        experiment = Experiment.find_or_create(
+            self.redis, 'link_color', 'blue', 'red')
         alternative_name = ab_test('link_color', 'blue', 'red')
         assert session['split'] == {'link_color': alternative_name}
         alternative = Alternative(self.redis, alternative_name, 'link_color')
@@ -281,11 +303,13 @@ class TestVersionedExperiments(TestCase):
 
         new_alternative_name = ab_test('link_color', 'blue', 'red')
         assert session['split']['link_color:1'] == new_alternative_name
-        new_alternative = Alternative(self.redis, new_alternative_name, 'link_color')
+        new_alternative = Alternative(
+            self.redis, new_alternative_name, 'link_color')
         assert new_alternative.participant_count == 1
 
     def test_cleans_up_old_versions_of_experiments_from_the_session(self):
-        experiment = Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
+        experiment = Experiment.find_or_create(
+            self.redis, 'link_color', 'blue', 'red')
         alternative_name = ab_test('link_color', 'blue', 'red')
         assert session['split'] == {'link_color': alternative_name}
         alternative = Alternative(self.redis, alternative_name, 'link_color')
@@ -300,7 +324,8 @@ class TestVersionedExperiments(TestCase):
         assert session['split'] == {'link_color:1': new_alternative_name}
 
     def test_only_counts_completion_of_users_on_the_current_version(self):
-        experiment = Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
+        experiment = Experiment.find_or_create(
+            self.redis, 'link_color', 'blue', 'red')
         alternative_name = ab_test('link_color', 'blue', 'red')
         assert session['split'] == {'link_color': alternative_name}
         alternative = Alternative(self.redis, alternative_name, 'link_color')
@@ -314,31 +339,41 @@ class TestVersionedExperiments(TestCase):
 
 
 class TestExtensionWhenRedisNotAvailable(TestCase):
-    def test_ab_test_raises_an_exception_when_db_failover_is_off(self):
+    def test_ab_test_raises_an_exception_without_db_failover(self):
         self.app.config['SPLIT_DB_FAILOVER'] = False
-        flexmock(Redis).should_receive('execute_command').and_raise(ConnectionError)
+        (flexmock(Redis)
+            .should_receive('execute_command')
+            .and_raise(ConnectionError))
         with raises(ConnectionError):
             ab_test('link_color', 'blue', 'red')
 
-    def test_finished_raises_an_exception_when_db_failover_is_off(self):
+    def test_finished_raises_an_exception_without_db_failover(self):
         self.app.config['SPLIT_DB_FAILOVER'] = False
-        flexmock(Redis).should_receive('execute_command').and_raise(ConnectionError)
+        (flexmock(Redis)
+            .should_receive('execute_command')
+            .and_raise(ConnectionError))
         with raises(ConnectionError):
             finished('link_color')
 
-    def test_ab_test_does_not_raise_an_exception_when_db_failover_is_on(self):
+    def test_ab_test_does_not_raise_an_exception_with_db_failover(self):
         self.app.config['SPLIT_DB_FAILOVER'] = True
-        flexmock(Redis).should_receive('execute_command').and_raise(ConnectionError)
+        (flexmock(Redis)
+            .should_receive('execute_command')
+            .and_raise(ConnectionError))
         ab_test('link_color', 'blue', 'red')
 
-    def test_ab_test_always_uses_first_alternative_when_db_failover_is_on(self):
+    def test_ab_test_always_uses_first_alternative_with_db_failover(self):
         self.app.config['SPLIT_DB_FAILOVER'] = True
-        flexmock(Redis).should_receive('execute_command').and_raise(ConnectionError)
+        (flexmock(Redis)
+            .should_receive('execute_command')
+            .and_raise(ConnectionError))
         assert ab_test('link_color', 'blue', 'red') == 'blue'
         assert ab_test('link_color', ('blue', 0.01), ('red', 0.2)) == 'blue'
         assert ab_test('link_color', ('blue', 0.8), ('red', 20)) == 'blue'
 
-    def test_finished_does_not_raise_an_exception_when_db_failover_is_on(self):
+    def test_finished_does_not_raise_an_exception_with_db_failover(self):
         self.app.config['SPLIT_DB_FAILOVER'] = True
-        flexmock(Redis).should_receive('execute_command').and_raise(ConnectionError)
+        (flexmock(Redis)
+            .should_receive('execute_command')
+            .and_raise(ConnectionError))
         finished('link_color')
