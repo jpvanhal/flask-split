@@ -9,8 +9,13 @@
     :license: MIT, see LICENSE for more details.
 """
 
+import urlparse
+
 from flask import current_app
 import redis
+
+
+urlparse.uses_netloc.append('redis')
 
 
 def _get_redis_connection():
