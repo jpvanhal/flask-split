@@ -64,7 +64,7 @@ you won't be able to tell if you have improved over the original or not.
 Tracking conversions
 ^^^^^^^^^^^^^^^^^^^^
 
-To measure how the alternative has imcpacted the conversion rate of your
+To measure how the alternative has impacted the conversion rate of your
 experiment you need to mark a visitor reaching the conversion point.  You can
 do this with the :func:`finished` function::
 
