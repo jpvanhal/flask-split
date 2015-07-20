@@ -11,8 +11,8 @@ env:
   - FLASK=0.8.1
   - FLASK=0.7.2
 install:
-  - pip install -q Flask==$FLASK --use-mirrors
-  - pip install -q -r dev_requirements.txt --use-mirrors
-  - pip install -q -e . --use-mirrors
+  - pip install -q Flask==$FLASK
+  - pip install -q -r dev_requirements.txt
+  - pip install -q -e .
 script:
   - python setup.py test
