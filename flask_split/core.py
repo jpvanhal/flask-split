@@ -123,22 +123,20 @@ def finished(experiment_name, reset=True):
             return
         alternative_name = _get_session().get(experiment.key)
         if alternative_name:
-            if 'split_finished' not in session:
-                session['split_finished'] = set()
-            if experiment.key not in session['split_finished']:
+            split_finished = set(session.get('split_finished', []))
+            if experiment.key not in split_finished:
                 alternative = Alternative(
                     redis, alternative_name, experiment_name)
                 alternative.increment_completion()
             if reset:
                 _get_session().pop(experiment.key, None)
                 try:
-                    session['split_finished'].remove(experiment.key)
+                    split_finished.remove(experiment.key)
                 except KeyError:
                     pass
-                session.modified = True
             else:
-                session['split_finished'].add(experiment.key)
-                session.modified = True
+                split_finished.add(experiment.key)
+            session['split_finished'] = list(split_finished)
     except ConnectionError:
         if not current_app.config['SPLIT_DB_FAILOVER']:
             raise

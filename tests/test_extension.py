@@ -2,13 +2,14 @@
 
 from __future__ import with_statement
 
-from flask import session
-from flask_split import ab_test, finished
-from flask_split.core import _get_session
-from flask_split.models import Alternative, Experiment
+from flask import make_response, session
 from flexmock import flexmock
 from pytest import raises
 from redis import ConnectionError, Redis
+
+from flask_split import ab_test, finished
+from flask_split.core import _get_session
+from flask_split.models import Alternative, Experiment
 
 from . import TestCase
 
@@ -126,7 +127,7 @@ class TestExtension(TestCase):
         assert session['split'] == {
             "link_color": alternative_name,
         }
-        assert session['split_finished'] == set(['link_color'])
+        assert session['split_finished'] == ['link_color']
 
     def test_finished_does_nothing_if_experiment_was_not_started_by_the_user(self):
         session['split'] = None
@@ -168,6 +169,11 @@ class TestExtension(TestCase):
         finished('link_color')
 
         assert alternative.conversion_rate == 1.0
+
+    def test_can_serialize_session(self):
+        ab_test('link_color', 'blue', 'red')
+        finished('link_color')
+        self.app.save_session(session, make_response())
 
 
 class TestExtensionWhenUserIsARobot(TestCase):
