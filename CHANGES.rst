@@ -3,6 +3,13 @@ Changelog
 
 Here you can see the full list of changes between each Flask-Split release.
 
+0.3.0 (2015-07-23)
+^^^^^^^^^^^^^^^^^^
+
+- Fixed #3: `TypeError: set([]) is not JSON serializable` when tracking a
+  conversion in Flask 0.10. Thanks Kacper Wikieł and Nick Woodhams.
+- Dropped support for Python 2.5.
+
 0.2.0 (2012-06-03)
 ^^^^^^^^^^^^^^^^^^
 
