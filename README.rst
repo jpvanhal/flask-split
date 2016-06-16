@@ -18,7 +18,7 @@ Python and Flask.
 Resources
 ---------
 
-- `Documentation <http://flask-split.readthedocs.org/>`_
+- `Documentation <https://flask-split.readthedocs.io/>`_
 - `Issue Tracker <http://github.com/jpvanhal/flask-split/issues>`_
 - `Code <http://github.com/jpvanhal/flask-split/>`_
 - `Development Version
