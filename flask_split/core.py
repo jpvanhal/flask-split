@@ -181,7 +181,7 @@ def _doing_other_tests(experiment_key):
     experiment with the key ``experiment_key`` at the moment, or `False`
     otherwise.
     """
-    for key in _get_session().iterkeys():
+    for key in _get_session():
         if key != experiment_key:
             return True
     return False
@@ -196,7 +196,7 @@ def _clean_old_versions(experiment):
 def _old_versions(experiment):
     if experiment.version > 0:
         return [
-            key for key in _get_session().iterkeys()
+            key for key in _get_session()
             if key.startswith(experiment.name) and key != experiment.key
         ]
     else:
