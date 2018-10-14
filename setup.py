@@ -31,7 +31,7 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=[
-        'Flask>=0.7',
+        'Flask>=0.8',
         'Redis>=2.4.13',
     ],
     cmdclass={'test': PyTest},
