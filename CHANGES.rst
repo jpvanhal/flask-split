@@ -3,6 +3,35 @@ Changelog
 
 Here you can see the full list of changes between each Flask-Split release.
 
+0.4.0 (2018-10-14)
+^^^^^^^^^^^^^^^^^^
+
+Features
+********
+
+- Added support for Python 3.7. Thanks Angus Pearson.
+- Switch from HTTP for loading JQuery from Google to protocol-relative URL. Thanks Angus Pearson.
+
+Bug fixes
+*********
+
+- Fixed #7: usage of deprecated ``flask.ext`` namespace.
+- Fixed usage of deprecated ``flask.Flask.save_session``.
+
+Breaking changes
+****************
+
+- Dropped support for Python 2.6.
+- Bumped minimum Flask version to 0.10.
+- Bumped minimum Redis version to 2.6.0.
+
+0.3.0 (2015-07-23)
+^^^^^^^^^^^^^^^^^^
+
+- Fixed #3: ``TypeError: set([]) is not JSON serializable`` when tracking a
+  conversion in Flask 0.10. Thanks Kacper Wikieł and Nick Woodhams.
+- Dropped support for Python 2.5.
+
 0.3.0 (2015-07-23)
 ^^^^^^^^^^^^^^^^^^
 
