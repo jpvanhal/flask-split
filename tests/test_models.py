@@ -146,7 +146,7 @@ class TestExperiment(TestCase):
         assert 'basket_text' in self.redis
 
     def test_saves_the_start_time_to_redis(self):
-        experiment_start_time = datetime(2012, 3, 9, 22, 01, 34)
+        experiment_start_time = datetime(2012, 3, 9, 22, 1, 34)
         (flexmock(Experiment)
             .should_receive('_get_time')
             .and_return(experiment_start_time))
@@ -155,7 +155,7 @@ class TestExperiment(TestCase):
         assert experiment.start_time == experiment_start_time
 
     def test_handles_not_having_a_start_time(self):
-        experiment_start_time = datetime(2012, 3, 9, 22, 01, 34)
+        experiment_start_time = datetime(2012, 3, 9, 22, 1, 34)
         (flexmock(Experiment)
             .should_receive('_get_time')
             .and_return(experiment_start_time))
