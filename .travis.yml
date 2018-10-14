@@ -9,8 +9,6 @@ services:
 env:
   - FLASK=1.0.2
   - FLASK=0.10.1
-  - FLASK=0.9
-  - FLASK=0.8.1
 install:
   - pip install -q Flask==$FLASK
   - pip install -q -r dev_requirements.txt
