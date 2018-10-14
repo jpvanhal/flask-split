@@ -173,7 +173,7 @@ class TestExtension(TestCase):
     def test_can_serialize_session(self):
         ab_test('link_color', 'blue', 'red')
         finished('link_color')
-        self.app.save_session(session, make_response())
+        self.app.session_interface.save_session(self.app, session, make_response())
 
 
 class TestExtensionWhenUserIsARobot(TestCase):
