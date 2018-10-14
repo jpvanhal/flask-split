@@ -32,7 +32,7 @@ setup(
     platforms='any',
     install_requires=[
         'Flask>=0.8',
-        'Redis>=2.4.13',
+        'Redis>=2.6.0',
     ],
     cmdclass={'test': PyTest},
     classifiers=[
