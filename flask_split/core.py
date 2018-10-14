@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    flask.ext.split.core
-    ~~~~~~~~~~~~~~~~~~~~
+    flask_split.core
+    ~~~~~~~~~~~~~~~~
 
     Implements the core functionality for doing A/B tests.
 

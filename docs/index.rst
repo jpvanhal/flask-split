@@ -36,7 +36,7 @@ In order to start using Flask-Split, you need to first register the Flask-Split
 blueprint to your Flask application::
 
     from flask import Flask
-    from flask.ext.split import split
+    from flask_split import split
 
     app = Flask(__name__)
     app.register_blueprint(split)
@@ -147,7 +147,7 @@ If you would like to restrict the access to the web interface, you can take
 advantage of blueprint's hooks::
 
     from flask import abort
-    from flask.ext.split import split
+    from flask_split import split
 
     @split.before_request
     def require_login():
@@ -158,7 +158,7 @@ advantage of blueprint's hooks::
 API reference
 -------------
 
-.. module:: flask.ext.split
+.. module:: flask_split
 
 This part of the documentation covers all the public classes and functions
 in Flask-Split.

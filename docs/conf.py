@@ -13,7 +13,7 @@
 
 import sys, os
 
-from flask.ext.split import __version__
+from flask_split import __version__
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the

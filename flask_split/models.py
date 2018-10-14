@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    flask.ext.split.models
-    ~~~~~~~~~~~~~~~~~~~~~~
+    flask_split.models
+    ~~~~~~~~~~~~~~~~~~
 
     This module provides the models for experiments and alternatives.
 

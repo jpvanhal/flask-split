@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    flask.ext.split
-    ~~~~~~~~~~~~~~~
+    flask_split
+    ~~~~~~~~~~~
 
     A/B testing for your Flask application.
 

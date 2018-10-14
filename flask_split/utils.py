@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    flask.ext.split.utils
-    ~~~~~~~~~~~~~~~~~~~~~
+    flask_split.utils
+    ~~~~~~~~~~~~~~~~~
 
     Generic utility functions.
 

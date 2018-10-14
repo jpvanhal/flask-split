@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    flask.ext.split.views
-    ~~~~~~~~~~~~~~~~~~~~~
+    flask_split.views
+    ~~~~~~~~~~~~~~~~~
 
     This module provides the views for Flask-Split's web interface.
 
@@ -18,7 +18,7 @@ from .utils import _get_redis_connection
 
 
 root = os.path.abspath(os.path.dirname(__file__))
-split = Blueprint('split', 'flask.ext.split',
+split = Blueprint('split', 'flask_split',
     template_folder=os.path.join(root, 'templates'),
     static_folder=os.path.join(root, 'static'),
     url_prefix='/split'
