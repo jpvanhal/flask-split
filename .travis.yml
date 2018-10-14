@@ -5,6 +5,7 @@ python:
 services:
   - redis
 env:
+  - FLASK=1.0.2
   - FLASK=0.10.1
   - FLASK=0.9
   - FLASK=0.8.1
