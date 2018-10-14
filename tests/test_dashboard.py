@@ -75,4 +75,4 @@ class TestDashboard(TestCase):
             .and_return(experiment_start_time))
         Experiment.find_or_create(self.redis, 'link_color', 'blue', 'red')
         response = self.client.get('/split/')
-        assert '2011-07-07' in response.data
+        assert '2011-07-07' in response.get_data(as_text=True)
