@@ -2,19 +2,19 @@
 
 from flask import Flask
 from flask_split import split
-from redis import Redis
+from flask_split.core import _get_redis_connection
 
 
 class TestCase(object):
     def setup_method(self, method):
-        self.redis = Redis()
-        self.redis.flushall()
         self.app = Flask(__name__)
         self.app.debug = True
         self.app.secret_key = 'very secret'
         self.app.register_blueprint(split)
         self._ctx = self.make_test_request_context()
         self._ctx.push()
+        self.redis = _get_redis_connection()
+        self.redis.flushall()
         self.client = self.app.test_client()
 
     def teardown_method(self, method):
